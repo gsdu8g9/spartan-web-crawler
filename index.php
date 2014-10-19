@@ -1,5 +1,10 @@
 <?php 
 
+/**
+ *    General Page Crawler
+ *    
+ */
+
 include_once('simple_html_dom.php');
 
 ?>
@@ -19,11 +24,19 @@ include_once('simple_html_dom.php');
 <?php
 
 if ( isset( $_POST['url'] ) ) {
-	echo $_POST['url'];
-	$target_url =  $_POST['url'];
 
+	$url = $_POST['url'];
+	// Check to make sure the 'http' is included
+	// If it's not included, add it
+	$parsed = parse_url($url);
+	if (empty($parsed['scheme'])) {
+	    $url = 'http://' . ltrim($url, '/');
+	}
+
+	echo '<h2>Showing all links for ' . $url . '</h2>';
+	echo '<h3> Links that Return a 404 are in <span style="color:red;">red</span></h3>';
 	$html = new simple_html_dom();
-	$html->load_file($target_url);
+	$html->load_file($url);
 
 	foreach( $html->find('a') as $link ){
 		if ( is_404(  $link->href  )) {
